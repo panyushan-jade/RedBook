@@ -1,3 +1,11 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json"
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    // ...其他TypeScript 配置
+    "baseUrl": ".", // 这必须配置，它允许TS从指定的基本目录解析非相对模块名称
+    "paths": {
+      "@src/*": ["./src/*"],
+      // 添加更多映射路径...
+    }
+  },
 }
