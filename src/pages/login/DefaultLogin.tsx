@@ -5,7 +5,8 @@ import {
   View,
   TouchableOpacity,
   Text,
-  Linking
+  Linking,
+  LayoutAnimation
 } from 'react-native';
 
 import welcomeLogo from '@src/assets/icon_main_logo.png';
@@ -13,11 +14,19 @@ import wxLogo from '@src/assets/icon_wx.png'
 import selected from '@src/assets/icon_selected.png';
 import unSelected from '@src/assets/icon_unselected.png';
 
-function DefaultLogin(): JSX.Element {
+type DefaultProps = {
+    setLoginType: React.Dispatch<React.SetStateAction<"input" | "quick">>
+}
 
+function DefaultLogin(props: DefaultProps): JSX.Element {
+    
     const [check, setCheck] = useState<boolean>(false);
 
-
+    const onPress = () => {
+        const { setLoginType } = props;
+        LayoutAnimation.easeInEaseOut();
+        setLoginType('input');
+    }
   return (
     <View style={styles.root}>
         <Image style={styles.welcomeLogo} source={welcomeLogo} />
@@ -28,7 +37,7 @@ function DefaultLogin(): JSX.Element {
             <Image source={wxLogo} style={styles.wxIcon} />
             <Text style={styles.loginTxt}>微信登陆</Text>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} style={styles.otherLogin}>
+        <TouchableOpacity activeOpacity={0.7} style={styles.otherLogin} onPress={onPress}>
             <Text style={styles.otherLoginTxt}>其他登陆方式 {'>'}</Text>
         </TouchableOpacity>
         <View style={styles.protocolLayout}>
