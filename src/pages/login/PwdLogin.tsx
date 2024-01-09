@@ -7,8 +7,14 @@ import {
   Text,
   Linking,
   TextInput,
-  LayoutAnimation
+  LayoutAnimation,
+  ToastAndroid
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { useGlobalStore } from '@src/stores';
+import { saveStorage } from '@src/utils/storage'
 
 import icon_triangle from '@src/assets/icon_triangle.png';
 import icon_eye_open from '@src/assets/icon_eye_open.png';
@@ -27,18 +33,26 @@ type PwdLogingProps = {
 
 function PwdLogin(props: PwdLogingProps): JSX.Element {
     const { setLoginType } = props;
-
+    
     const [check, setCheck] = useState<boolean>(false);
     const [eyeOpen, setEyeOpen] = useState<boolean>(true);
-
     const [phone, setPhone] = useState<string>('');
     const [pwd, setPwd] = useState<string>('');
-    const canLogin = phone?.length === 11 && pwd?.length === 6;
+
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const saveUserInfo = useGlobalStore((state) => state.saveUserInfo);
+
+
+    const canLogin = phone?.length === 11 && pwd?.length === 6 && check;
     const onLoginPress = async () => {
         if (!canLogin || !check) {
+            ToastAndroid.show("请输入", ToastAndroid.SHORT);
             return;
         }
-
+        const data = {name:'张三',age:18,sex:'male'}
+        await saveStorage('userInfo',data)
+        saveUserInfo(data)
+        navigation.replace('Home')
         // UserStore.requestLogin(replaceBlank(phone), pwd, (success: boolean) => {
         //     if (success) {
         //         navigation.replace('MainTab');

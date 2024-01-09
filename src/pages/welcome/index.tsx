@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { loadStorage } from '@src/utils/storage'
 
 import welcomeLogo from '@src/assets/icon_main_logo.png'
 
@@ -23,8 +24,13 @@ function Welcome(): JSX.Element {
 // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
-const startLogin = () => {
-  navigation.replace('Login');
+const startLogin = async () => {
+  const userInfo = await loadStorage('userInfo')
+  if(userInfo){
+    navigation.replace('Home');
+  }else{
+    navigation.replace('Login');
+  }
 }
 
   return (

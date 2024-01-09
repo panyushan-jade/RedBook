@@ -7,6 +7,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import Welcome from '@src/pages/welcome';
 import Login from '@src/pages/login';
+import Home from '@src/pages/home';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ function App(): JSX.Element {
           }}>
           <Stack.Screen name="WelCome" component={Welcome} />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
