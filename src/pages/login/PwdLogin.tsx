@@ -52,7 +52,7 @@ function PwdLogin(props: PwdLogingProps): JSX.Element {
         const data = {name:'张三',age:18,sex:'male'}
         await saveStorage('userInfo',data)
         saveUserInfo(data)
-        navigation.replace('Home')
+        navigation.replace('MainTab')
         // UserStore.requestLogin(replaceBlank(phone), pwd, (success: boolean) => {
         //     if (success) {
         //         navigation.replace('MainTab');

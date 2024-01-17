@@ -27,7 +27,7 @@ function Welcome(): JSX.Element {
 const startLogin = async () => {
   const userInfo = await loadStorage('userInfo')
   if(userInfo){
-    navigation.replace('Home');
+    navigation.replace('MainTab');
   }else{
     navigation.replace('Login');
   }
