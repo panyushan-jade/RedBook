@@ -12,7 +12,8 @@ import {
 import Mock from 'mockjs';
 import ResizeImage from '@src/components/ResizeImage'
 import AnimateHeart from '@src/components/Heart'
-// import MasonryList from 'react-native-masonry-list';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MasonryList from '@react-native-seoul/masonry-list';
 import CategoryList from './components/CategoryList'
 import TitleBar from './components/TitleBar'
@@ -88,7 +89,7 @@ function Home(): JSX.Element {
 
   const [data,setData] = useState([])
   const [refreshing,setRefreshing] = useState(false);
-
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   
   const fetchData = () => {
     const mockData = Mock.mock({
@@ -112,9 +113,13 @@ function Home(): JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
+  const onArticlePress = () => {
+    navigation.push('ArticleDetail', {id: 123})
+  }
+
   const renderItem = ({item}: any) => {
     return (
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={onArticlePress}>
         <ResizeImage uri={item.uri} />
         <Text style={styles.titleTxt}>{item.title}</Text>
         <View style={styles.nameLayout}>

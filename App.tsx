@@ -7,6 +7,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Welcome from '@src/pages/welcome';
 import Login from '@src/pages/login';
 import MainTab from '@src/pages/mainTab';
+import ArticleDetail from '@src/pages/articleDetail'
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,13 @@ function App(): JSX.Element {
           <Stack.Screen name="WelCome" component={Welcome} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="MainTab" component={MainTab} />
+          <Stack.Screen
+                name='ArticleDetail'
+                component={ArticleDetail}
+                options={{
+                    // ...TransitionPresets.SlideFromRightIOS
+                }}
+            />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
