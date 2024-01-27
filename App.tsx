@@ -20,7 +20,8 @@ function App(): JSX.Element {
           initialRouteName="WelCome"
           screenOptions={{
             headerShown: false,
-          }}>
+          }}
+          >
           <Stack.Screen name="WelCome" component={Welcome} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="MainTab" component={MainTab} />
@@ -28,7 +29,7 @@ function App(): JSX.Element {
                 name='ArticleDetail'
                 component={ArticleDetail}
                 options={{
-                    // ...TransitionPresets.SlideFromRightIOS
+                  animation:'slide_from_right'
                 }}
             />
         </Stack.Navigator>

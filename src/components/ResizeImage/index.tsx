@@ -5,7 +5,7 @@ type Props = {
     uri: string;
 };
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 const WIDTH =  (SCREEN_WIDTH - 18) / 2;
 
 export default ({ uri }: Props) => {
@@ -18,11 +18,11 @@ export default ({ uri }: Props) => {
             setHeight(showHeight);
         })
     }, [uri]);
-
+    
     return (
         <Image
             style={{
-                width: WIDTH,
+                width: SCREEN_WIDTH,
                 height: height,
                 resizeMode: 'cover',
             }}
