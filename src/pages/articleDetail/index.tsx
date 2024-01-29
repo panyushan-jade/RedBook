@@ -1,10 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image, Dimensions,TouchableOpacity,Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
 import Swiper from 'react-native-swiper';
 import Mock from 'mockjs';
+import Heart from '@src/components/Heart';
 
 import icon_arrow from '@src/assets/icon_arrow.png';
 import icon_share from '@src/assets/icon_share.png';
+import icon_comment from '@src/assets/icon_comment.png';
+import icon_edit_comment from '@src/assets/icon_edit_comment.png';
+import icon_collection from '@src/assets/icon_collection.png';
+import icon_collection_selected from '@src/assets/icon_collection_selected.png';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('screen');
 
@@ -12,6 +29,17 @@ const generateRandomImage = () => {
   const width = Mock.Random.integer(200, 600);
   const height = Mock.Random.integer(200, 400);
   return `https://picsum.photos/${width}/${height}`;
+};
+
+const generateComment = () => {
+  return {
+    avatarUrl: Mock.Random.image('40x40', Mock.Random.color(), 'avatar'),
+    userName: Mock.Random.cname(),
+    message: Mock.Random.csentence(),
+    location: Mock.Random.region(),
+    isFavorite: Mock.Random.boolean(),
+    favoriteCount: Mock.Random.integer(1, 100),
+  };
 };
 
 const fetchData = () => {
@@ -23,45 +51,247 @@ const fetchData = () => {
         url: () => generateRandomImage(),
       },
     ],
-    avatarUrl: () => generateRandomImage(),
+    avatarUrl: Mock.Random.image('40x40', Mock.Random.color(), 'avatar'),
     description: '@cparagraph(1, 3)',
     author: '@cname',
     date: '@date("yyyy-MM-dd")',
+    isFavorite: Mock.Random.integer(1, 100),
+    favoriteCount: Mock.Random.integer(1, 100),
+    collectionCount: Mock.Random.integer(1, 100),
+    isCollection: Mock.Random.boolean(),
+    comments: () => {
+      const commentsCount = Mock.Random.integer(10, 30);
+      const comments = [];
+      for (let i = 10; i < commentsCount; i++) {
+        comments.push(generateComment());
+      }
+      return comments;
+    },
   });
   return mockData;
 };
 
 function ArticleDetail(): JSX.Element {
   const [detail, setDetail] = useState<any>({});
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   useEffect(() => {
     const data = fetchData();
     setDetail(data);
   }, []);
 
+  const renderTitle = () => {
+    return (
+      <View style={styles.titleLayout}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.pop()}
+        >
+          <Image style={styles.backImg} source={icon_arrow} />
+        </TouchableOpacity>
+        {detail.avatarUrl && (
+          <Image style={styles.avatarImg} source={{uri: detail.avatarUrl}} />
+        )}
+        <Text style={styles.userNameTxt}>Jay丶</Text>
+        <Text style={styles.followTxt}>关注</Text>
+        <Image style={styles.shareImg} source={icon_share} />
+      </View>
+    );
+  };
+
+  const renderInfo = () => {
+    return (
+      <>
+        <Text style={styles.articleTitleTxt}>每次都被问的这件衣服10块钱</Text>
+        <Text style={styles.descTxt}>
+          布料少的衣服我不允许它超过10块钱
+          {'\n'}
+          这是我的快乐购物原则
+        </Text>
+        <Text style={styles.tagsTxt}>{'#分享穿搭 #我的穿搭 #OOTD'}</Text>
+        <Text style={styles.timeAndLocationTxt}>01-22 深圳</Text>
+        <View style={styles.line} />
+      </>
+    );
+  };
+
+  const renderComments = () => {
+    const styles = StyleSheet.create({
+      commentsCountTxt: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 20,
+        marginLeft: 16,
+      },
+      inputLayout: {
+        width: '100%',
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+      userAvatarImg: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        resizeMode: 'cover',
+      },
+      commentInput: {
+        flex: 1,
+        height: 32,
+        borderRadius: 16,
+        marginLeft: 12,
+        backgroundColor: '#f0f0f0',
+        fontSize: 14,
+        color: '#333',
+        textAlignVertical: 'center',
+        paddingVertical: 0,
+        paddingHorizontal: 12,
+      },
+      commentsContainer: {
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 32,
+      },
+      commentItem: {
+        width: '100%',
+        flexDirection: 'row',
+      },
+      cAvatar: {
+        width: 36,
+        height: 36,
+        resizeMode: 'cover',
+        borderRadius: 18,
+      },
+      contentLayout: {
+        flex: 1,
+        marginHorizontal: 12,
+      },
+      nameTxt: {
+        fontSize: 12,
+        color: '#999',
+      },
+      messageTxt: {
+        fontSize: 14,
+        color: '#333',
+        marginTop: 6,
+      },
+      timeLocationTxt: {
+        fontSize: 12,
+        color: '#bbb',
+      },
+      countLayout: {
+        alignItems: 'center',
+      },
+      fCount: {
+        fontSize: 12,
+        color: '#666',
+        marginTop: 2,
+      },
+      divider: {
+        marginLeft: 50,
+        marginRight: 0,
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: '#eee',
+        marginVertical: 16,
+      },
+    });
+    return (
+       (
+        <>
+          <Text style={styles.commentsCountTxt}>{`共 ${
+            detail?.comments?.length || 0
+          } 条评论`}</Text>
+          <View style={styles.inputLayout}>
+            <Image
+            style={styles.userAvatarImg}
+            source={{uri: detail.avatarUrl}}
+          />
+            <TextInput
+              style={styles.commentInput}
+              placeholder="说点什么吧，万一火了呢～"
+              placeholderTextColor={'#bbb'}
+            />
+          </View>
+          <View style={styles.commentsContainer}>
+            {detail.comments?.map((i: ArticleComment, index: number) => {
+              return (
+                <View key={`${index}`} style={{}}>
+                  <View style={styles.commentItem}>
+                    <Image style={styles.cAvatar} source={{uri: i.avatarUrl}} />
+                    <View style={styles.contentLayout}>
+                      <Text style={styles.nameTxt}>{i.userName}</Text>
+                      <Text style={styles.messageTxt}>
+                        {i.message}
+                        <Text style={styles.timeLocationTxt}>
+                          2024-01-29 {i.location}
+                        </Text>
+                      </Text>
+                    </View>
+
+                    <View style={styles.countLayout}>
+                      <Heart size={20} value={i.isFavorite} />
+                      <Text style={styles.fCount}>{i.favoriteCount}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.divider} />
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )
+    );
+  };
+
+  const renderBottom = () => {
+    return (
+      <View style={styles.bottomLayout}>
+        <View style={styles.bottomEditLayout}>
+          <Image style={styles.editImg} source={icon_edit_comment} />
+          <TextInput
+            style={styles.bottomCommentInput}
+            placeholder="说点什么"
+            placeholderTextColor={'#333'}
+          />
+        </View>
+        <Heart size={30} value={detail.isFavorite} />
+        <Text style={styles.bottomCount}>{detail.favoriteCount}</Text>
+
+        <Image
+          style={styles.bottomIcon}
+          source={
+            detail.isCollection ? icon_collection_selected : icon_collection
+          }
+        />
+        <Text style={styles.bottomCount}>{detail.collectionCount}</Text>
+
+        <Image style={styles.bottomIcon} source={icon_comment} />
+        <Text style={styles.bottomCount}>{detail.comments?.length || 0}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.root}>
-      <View style={styles.titleLayout}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    // onPress={() => navigation.pop()}
-                >
-                    <Image style={styles.backImg} source={icon_arrow} />
-                </TouchableOpacity>
-                {detail.avatarUrl && <Image style={styles.avatarImg} source={{uri: detail.avatarUrl}} />}
-                <Text style={styles.userNameTxt}>Jay丶</Text>
-                <Text style={styles.followTxt}>关注</Text>
-                <Image style={styles.shareImg} source={icon_share} />
-            </View>
-      {detail?.image && (
-        <Swiper containerStyle={styles.containerStyle} activeDotColor="#ff2442">
-          {detail?.image?.map((d: any) => {
-            return (
-              <Image style={styles.image} key={d.url} source={{uri: d.url}} />
-            );
-          })}
-        </Swiper>
-      )}
+      {renderTitle()}
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        {detail?.image && (
+          <Swiper
+            containerStyle={styles.containerStyle}
+            activeDotColor="#ff2442">
+            {detail?.image?.map((d: any) => {
+              return (
+                <Image style={styles.image} key={d.url} source={{uri: d.url}} />
+              );
+            })}
+          </Swiper>
+        )}
+        {renderInfo()}
+        {renderComments()}
+      </ScrollView>
+
+      {renderBottom()}
     </View>
   );
 }
@@ -88,42 +318,115 @@ const styles = StyleSheet.create({
   titleLayout: {
     width: '100%',
     height: 56,
-    backgroundColor:'white',
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
-},
-backImg: {
-  width: 20,
-  height: 20,
-},
-avatarImg: {
-  width: 40,
-  height: 40,
-  resizeMode: 'cover',
-  borderRadius: 20,
-},
-userNameTxt: {
-  fontSize: 15,
-  flex: 1,
-  color: '#333',
-  marginLeft: 16,
-},
-followTxt: {
-  paddingHorizontal: 16,
-  height: 30,
-  borderRadius: 15,
-  borderWidth: 1,
-  borderColor: '#ff2442',
-  textAlign: 'center',
-  textAlignVertical: 'center',
-  fontSize: 12,
-  color: '#ff2442',
-},
-shareImg: {
-  width: 28,
-  height: 28,
-  marginHorizontal: 16,
-},
+  },
+  backImg: {
+    width: 20,
+    height: 20,
+  },
+  avatarImg: {
+    width: 40,
+    height: 40,
+    resizeMode: 'cover',
+    borderRadius: 20,
+  },
+  userNameTxt: {
+    fontSize: 15,
+    flex: 1,
+    color: '#333',
+    marginLeft: 16,
+  },
+  followTxt: {
+    paddingHorizontal: 16,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#ff2442',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 12,
+    color: '#ff2442',
+  },
+  shareImg: {
+    width: 28,
+    height: 28,
+    marginHorizontal: 16,
+  },
+  articleTitleTxt: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+    paddingHorizontal: 16,
+    marginTop: 20,
+  },
+  descTxt: {
+    fontSize: 15,
+    color: '#333',
+    marginTop: 6,
+    paddingHorizontal: 16,
+  },
+  tagsTxt: {
+    fontSize: 15,
+    color: '#305090',
+    marginTop: 6,
+    paddingHorizontal: 16,
+  },
+  timeAndLocationTxt: {
+    fontSize: 12,
+    color: '#bbb',
+    marginVertical: 16,
+    marginLeft: 16,
+  },
+  line: {
+    marginHorizontal: 16,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#eee',
+  },
+  bottomLayout: {
+    width: '100%',
+    height: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  bottomEditLayout: {
+    height: 40,
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    marginRight: 12,
+  },
+  editImg: {
+    width: 20,
+    height: 20,
+    tintColor: '#333',
+  },
+  bottomCommentInput: {
+    height: '100%',
+    fontSize: 16,
+    color: '#333',
+    textAlignVertical: 'center',
+    paddingVertical: 0,
+  },
+  bottomCount: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  bottomIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+    marginLeft: 12,
+  },
 });
 
 export default ArticleDetail;
